@@ -25,12 +25,28 @@ section.start-page {
 
 /* Quiz Page */
 
-.quiz-page {
+/* .quiz-page {
   border: 5px solid gold;
+} */
+
+.question-text {
+  font-family: Karla, sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .possible-answers {
   display: flex;
   justify-content: flex-start;
   gap: 3rem;
+  list-style-type: none;
+  padding: 0;
+}
+
+.answer-option {
+  cursor: pointer;
+  padding: 8px;
+  font-size: 0.7rem;
+  border: 1px solid #293264;
+  border-radius: 12px;
 }

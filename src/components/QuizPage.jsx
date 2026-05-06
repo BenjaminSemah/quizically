@@ -7,11 +7,17 @@ import QuestionAndAnswers from "./QuestionAndAnswers"
 export default function QuizPage() {
 
   const [quizData, setQuizData] = useState([])
-  const [randomAnswers, setRandomAnswers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  console.log(quizData)
+  function shuffleAnswers(correctAnswer, wrongAnswers) {
+    const shuffled = [correctAnswer, ...wrongAnswers]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
 
   useEffect(() => {
     fetch('https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple')
@@ -22,34 +28,41 @@ export default function QuizPage() {
         return res.json()
       })
       .then(data => {
-        setQuizData(data.results)
+        const formattedQuizData = data.results.map(quizInfo => {
+          const decodedQuestion = decode(quizInfo.question)
+          const decodedCorrectAnswer = decode(quizInfo.correct_answer)
+          const decodedIncorrectAnswers = quizInfo.incorrect_answers.map(ans => decode(ans))
+          return {
+            id: nanoid(),
+            question: decodedQuestion,
+            answersOptions: shuffleAnswers(decodedCorrectAnswer, decodedIncorrectAnswers),
+            correct_answer: decodedCorrectAnswer,
+            selectedAnswer: ""
+          }
+        })
+        setQuizData(formattedQuizData)
         setLoading(false)
       })
-      .catch((err) => setError(err.message))
+      // .catch((err) => {
+      //   setError("Too many requests. Please waith a moment and try again")
+      //   setLoading(false)
+      // })
   }, [])
 
-  // TO-DO: Shift this logic into the useEffect
+  const quizQNAElements = quizData.map(data => (
+    <QuestionAndAnswers 
+      key={data.id} 
+      question={data.question}
+      answers={data.answersOptions} 
+    />
+  ))
 
-  function shuffleAnswers(string, array) {
-    const shuffled = [string, ...array]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-    return shuffled
-  }
-
-  const QandAElements = quizData.map(data => {
-    const question = decode(data.question)
-    const shuffledAnswers = shuffleAnswers(data.correct_answer, data.incorrect_answers)
-    return (
-      <QuestionAndAnswers key={nanoid()} question={question} answers={shuffledAnswers} />
-    )
-  })
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error}</p>
 
   return (
     <section className="quiz-page">
-      {QandAElements}
+      {quizQNAElements}
     </section>
   )
 }

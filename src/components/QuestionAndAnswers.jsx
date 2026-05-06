@@ -1,11 +1,8 @@
-import { nanoid } from "nanoid"
-import { decode } from 'html-entities'
-
 export default function QuestionAndAnswers(props) {
 
-  const answerElements = props.answers.map((answer) => {
-    return <li key={nanoid()} className="answer-option">{decode(answer)}</li>
-  })
+  const answerElements = props.answers.map((answer) => (
+    <li key={answer} className="answer-option">{answer}</li>
+  ))
 
   return (
     <>
