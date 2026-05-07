@@ -1,11 +1,11 @@
-export default function StartPage() {
+export default function StartPage({ startQuiz }) {
   return (
     <section className="start-page">
       <h1 className="game-title">Quizically</h1>
       <p className="game-subtext">
-        Play the game and play the game.
+        Test your general knowledge with 5 random questions.
       </p>
-      <button type="button" className="start-btn">Start Quiz</button>
+      <button type="button" className="start-btn" onClick={startQuiz}>Start Quiz</button>
     </section>
   )
 }

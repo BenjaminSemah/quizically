@@ -1,26 +1,32 @@
-export default function QuestionAndAnswers(props) {
+export default function QuestionAndAnswers({
+  id,
+  question,
+  correctAnswer,
+  answers,
+  selectedAnswer,
+  handleClick,
+  isCheckingAnswers
+}) {
 
-  const answerElements = props.answers.map((answer) => {
+  const answerElements = answers.map((answer) => {
 
     function checkAnswer() {
-      if (props.isCheckingAnswers) {
-        if (answer === props.correctAnswer) {
+      if (isCheckingAnswers) {
+        if (answer === correctAnswer) {
           return "correct"
         } else {
-          return answer === props.selectedAnswer ? "wrong" : ""
+          return answer === selectedAnswer ? "wrong" : ""
         }
       } else {
-        return answer === props.selectedAnswer ? "selected" : ""
+        return answer === selectedAnswer ? "selected" : ""
       }
-
     }
-
 
     return (
       <li 
         key={answer} 
         className={`answer-option ${checkAnswer()}`}
-        onClick={() => props.handleClick(props.id, answer)}
+        onClick={() => isCheckingAnswers ? null :  handleClick(id, answer)}
       >
         {answer}
       </li>
@@ -31,7 +37,7 @@ export default function QuestionAndAnswers(props) {
     <>
       <div className="qna-container">
         <h2 className="question-text">
-          {props.question}
+          {question}
         </h2>
         <ul className="possible-answers">
           {answerElements}

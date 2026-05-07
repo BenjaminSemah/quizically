@@ -9,11 +9,9 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isCheckingAnswers, setIsCheckingAnswers] = useState(false)
-  const [restart, setRestart] = useState(false)
 
-  console.log(quizData)
-
-  useEffect(() => {
+  function getQuizData() {
+    setError(null)
     fetch('https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple')
       .then(res => {
         if (!res.ok) {
@@ -31,19 +29,21 @@ export default function QuizPage() {
             question: decodedQuestion,
             answersOptions: shuffleAnswers(decodedCorrectAnswer, decodedIncorrectAnswers),
             correctAnswer: decodedCorrectAnswer,
-            isAnswered: false,
             selectedAnswer: "",
-            isCheckingAnswers: isCheckingAnswers
           }
         })
         setQuizData(formattedQuizData)
         setLoading(false)
       })
-      // .catch((err) => {
-      //   setError("Too many requests. Please waith a moment and try again")
-      //   setLoading(false)
-      // })
-  }, [restart])
+  // .catch((err) => {
+  //   setError("Too many requests. Please wait a moment and try again")
+  //   setLoading(false)
+  // })
+  }
+
+  useEffect(() => {
+    getQuizData()
+  }, [])
 
   function shuffleAnswers(correctAnswer, wrongAnswers) {
     const shuffled = [correctAnswer, ...wrongAnswers]
@@ -69,27 +69,29 @@ export default function QuizPage() {
       correctAnswer={data.correctAnswer}
       answers={data.answersOptions} 
       selectedAnswer={data.selectedAnswer}
-      isAnswered={false}
       handleClick={selectAnswer}
       isCheckingAnswers={isCheckingAnswers}
     />
   ))
 
   function handleClick() {
-    if (isCheckingAnswers) {
-      setRestart(true)
-      setQuizData([])
-      console.log(restart)
-    } 
-    setIsCheckingAnswers(prevState => !prevState)
+    if (isCheckingAnswers) {   
+      setLoading(true)
+      getQuizData()
+      setIsCheckingAnswers(false)
+    } else {
+      setIsCheckingAnswers(true)
+    }
   }
 
   function checkScores() {
     let correctAnswers = quizData.filter(data => {
       return data.correctAnswer === data.selectedAnswer
     })
-    return `${correctAnswers.length}`
+    return correctAnswers.length
   }
+
+  const allAnswered = quizData.every(quizInfo => quizInfo.selectedAnswer !== "")
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error}</p>
@@ -97,14 +99,19 @@ export default function QuizPage() {
   return (
     <section className="quiz-page">
       {quizQNAElements}
-      <span className='answer-span'>
-        <p>
-          {isCheckingAnswers ? checkScores() : null}
+      <span className='score-text-and-button'>
+        <p className='score-text'>
+          {
+            isCheckingAnswers ? 
+            `You scored ${checkScores()} / ${quizData.length} correct answers` : 
+            null
+          }
         </p>
         <button 
           type="button" 
           className='check-answers-btn'
           onClick={handleClick}
+          disabled={!allAnswered}
         >
           {isCheckingAnswers ? "Play again" : "Check answers"}
         </button>

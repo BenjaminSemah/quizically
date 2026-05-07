@@ -5,12 +5,14 @@ import './App.css'
 
 function App() {
 
-  return (
-    <>
-      {/* <StartPage /> */}
-      <QuizPage />
-    </>
-  )
+  const [isStart, setIsStart] = useState(false)
+
+  function startQuiz() {
+    setIsStart(true)
+  }
+
+  return isStart ? <QuizPage /> : <StartPage startQuiz={startQuiz}/>
+
 }
 
 export default App
