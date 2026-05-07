@@ -1,8 +1,31 @@
 export default function QuestionAndAnswers(props) {
 
-  const answerElements = props.answers.map((answer) => (
-    <li key={answer} className="answer-option">{answer}</li>
-  ))
+  const answerElements = props.answers.map((answer) => {
+
+    function checkAnswer() {
+      if (props.isCheckingAnswers) {
+        if (answer === props.correctAnswer) {
+          return "correct"
+        } else {
+          return answer === props.selectedAnswer ? "wrong" : ""
+        }
+      } else {
+        return answer === props.selectedAnswer ? "selected" : ""
+      }
+
+    }
+
+
+    return (
+      <li 
+        key={answer} 
+        className={`answer-option ${checkAnswer()}`}
+        onClick={() => props.handleClick(props.id, answer)}
+      >
+        {answer}
+      </li>
+    )
+  })
 
   return (
     <>

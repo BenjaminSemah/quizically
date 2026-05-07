@@ -48,5 +48,40 @@ section.start-page {
   padding: 8px;
   font-size: 0.7rem;
   border: 1px solid #293264;
+  color: #293264;
   border-radius: 12px;
+}
+
+.answer-option.selected,
+.answer-option.correct,
+.answer-option.wrong {
+  border: none;
+  color: #293264;
+}
+
+
+.answer-option.selected {
+  background-color: #D6DBF5;
+}
+
+.answer-option.correct {
+  background-color: #94D7A2;
+}
+
+.answer-option.wrong {
+  background-color: #F8BCBC;
+}
+
+.check-answers-btn {
+  background-color: #4D5B9E;
+  color: #F5F7FB;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  width: 175px;
+  margin: 30px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
